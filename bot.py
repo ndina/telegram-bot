@@ -41,7 +41,7 @@ def fetch_daily_task():
                 daily_question = response["data"]["activeDailyCodingChallengeQuestion"]["question"]
                 title = escape_markdown_v2(daily_question["title"])
                 link = escape_markdown_v2("https://leetcode.com" + response["data"]["activeDailyCodingChallengeQuestion"]["link"])
-                return f"Today's LeetCode task: ||{title}\\n{link}||"
+                return f"Today's LeetCode task: ||{title}\n{link}||"
             else:
                 print("Unexpected response structure:", response)
                 return "Could not fetch today's LeetCode task."
@@ -102,8 +102,8 @@ def handle_reply(update: Update, context: CallbackContext):
             display_name = user.first_name
 
         motivational_quote = fetch_motivational_quote()
-        reply_text = escape_markdown_v2(f"{display_name}, good job.\nRemember: {motivational_quote}")
-        update.message.reply_text(reply_text, parse_mode='MarkdownV2')
+        reply_text = f"{display_name}, good job. {motivational_quote}"
+        update.message.reply_text(reply_text)
     else:
         print("Reply is not to the daily task message. No motivational quote sent.")
 
