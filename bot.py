@@ -10,7 +10,7 @@ import os
 
 print("Starting bot...")
 
-TOKEN = os.getenv('TOKEN')
+# TOKEN = os.getenv('TOKEN')
 daily_task_message_id = None
 
 def escape_markdown_v2(text):
@@ -103,7 +103,7 @@ def handle_reply(update: Update, context: CallbackContext):
 
 def main():
     print("Initializing Updater...")
-    updater = Updater(TOKEN, use_context=True)
+    updater = Updater('7048375330:AAEIYAO4DJt91_fFfMmuFwNjafwnwt2D3AQ', use_context=True)
     dp = updater.dispatcher
     
     # Handlers
