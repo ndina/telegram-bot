@@ -41,7 +41,7 @@ def fetch_daily_task():
                 daily_question = response["data"]["activeDailyCodingChallengeQuestion"]["question"]
                 title = escape_markdown_v2(daily_question["title"])
                 link = escape_markdown_v2("https://leetcode.com" + response["data"]["activeDailyCodingChallengeQuestion"]["link"])
-                return f"Today's LeetCode task: ||{title}\n{link}||"
+                return f"Today's LeetCode task: ||{title}\\n{link}||"
             else:
                 print("Unexpected response structure:", response)
                 return "Could not fetch today's LeetCode task."
