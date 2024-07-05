@@ -6,11 +6,11 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 import schedule
 import time as tm
 from datetime import time, datetime
+import os
 
 print("Starting bot...")
 
-# Your bot's token
-TOKEN = '7048375330:AAEIYAO4DJt91_fFfMmuFwNjafwnwt2D3AQ'
+TOKEN = os.getenv('TOKEN')
 daily_task_message_id = None
 
 def escape_markdown_v2(text):
@@ -20,7 +20,6 @@ def escape_markdown_v2(text):
     escape_chars = r'_*[]()~`>#+-=|{}.!'
     return ''.join(['\\' + char if char in escape_chars else char for char in text])
 
-# Function to fetch the daily LeetCode task using curl
 def fetch_daily_task():
     print("Fetching daily task with curl...")
     curl_command = [
@@ -52,7 +51,6 @@ def fetch_daily_task():
         print(f"Error fetching daily task with curl: {e}")
         return "Error fetching today's LeetCode task."
 
-# Function to fetch a random motivational quote
 def fetch_motivational_quote():
     print("Fetching motivational quote...")
     try:
@@ -66,7 +64,6 @@ def fetch_motivational_quote():
         print(f"Error fetching motivational quote: {e}")
         return "Error fetching motivational quote."
 
-# Function to send daily task
 def send_daily_task(context: CallbackContext):
     global daily_task_message_id
     print("Sending daily task...")
@@ -75,7 +72,6 @@ def send_daily_task(context: CallbackContext):
     message = context.bot.send_message(chat_id=chat_id, text=task_link, parse_mode='MarkdownV2', disable_web_page_preview=True)
     daily_task_message_id = message.message_id
 
-# Function to send task immediately for testing
 def send_task_immediately(update: Update, context: CallbackContext):
     global daily_task_message_id
     print("Sending task immediately for testing...")
@@ -84,14 +80,12 @@ def send_task_immediately(update: Update, context: CallbackContext):
     message = context.bot.send_message(chat_id=chat_id, text=task_link, parse_mode='MarkdownV2', disable_web_page_preview=True)
     daily_task_message_id = message.message_id
 
-# Function to start the bot and send a daily task at a specific time
 def start(update: Update, context: CallbackContext):
     print("Starting scheduled task...")
     chat_id = update.message.chat_id
     context.job_queue.run_daily(send_daily_task, time=time(7, 0), context=chat_id)
     update.message.reply_text('I will send you daily LeetCode tasks at 7 AM!')
 
-# Function to handle replies and send encouraging messages
 def handle_reply(update: Update, context: CallbackContext):
     global daily_task_message_id
     user = update.message.from_user
@@ -121,7 +115,6 @@ def main():
     print("Starting polling...")
     updater.start_polling()
 
-    # Schedule job to run daily
     while True:
         schedule.run_pending()
         tm.sleep(1)
