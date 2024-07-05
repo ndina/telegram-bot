@@ -102,7 +102,8 @@ def handle_reply(update: Update, context: CallbackContext):
             display_name = user.first_name
 
         motivational_quote = fetch_motivational_quote()
-        reply_text = f"{display_name}, good job. {motivational_quote}"
+        reply_text = f"{display_name}, good job.\nRemember: {motivational_quote}"
+        reply_text = reply_text[:-2]
         update.message.reply_text(reply_text)
     else:
         print("Reply is not to the daily task message. No motivational quote sent.")
