@@ -7,10 +7,11 @@ import schedule
 import time as tm
 from datetime import time, datetime
 import os
+import random
 
 print("Starting bot...")
 
-# TOKEN = os.getenv('TOKEN')
+TOKEN = os.getenv('TOKEN')
 daily_task_message_id = None
 
 def escape_markdown_v2(text):
@@ -54,15 +55,18 @@ def fetch_daily_task():
 def fetch_motivational_quote():
     print("Fetching motivational quote...")
     try:
-        response = requests.get("https://zenquotes.io/api/random")
+        response = requests.get("https://type.fit/api/quotes")
         response.raise_for_status()
-        quote_data = response.json()
-        quote = escape_markdown_v2(quote_data[0]['q'])
-        author = escape_markdown_v2(quote_data[0]['a'])
-        return f"{quote} - {author}"
+        quotes = response.json()
+        motivational_quotes = [quote for quote in quotes if 'motivational' in quote['text'].lower()]
+        if motivational_quotes:
+            quote = random.choice(motivational_quotes)['text']
+        else:
+            quote = random.choice(quotes)['text']
+        return escape_markdown_v2(quote)
     except requests.exceptions.RequestException as e:
         print(f"Error fetching motivational quote: {e}")
-        return "Error fetching motivational quote."
+        return "couldn't fetch a motivational quote for today, but keep up the great work!"
 
 def send_daily_task(context: CallbackContext):
     global daily_task_message_id
@@ -98,12 +102,14 @@ def handle_reply(update: Update, context: CallbackContext):
             display_name = user.first_name
 
         motivational_quote = fetch_motivational_quote()
-        reply_text = f"{display_name}, good job. {motivational_quote}"
-        update.message.reply_text(reply_text)
+        reply_text = escape_markdown_v2(f"{display_name}, good job.\nRemember: {motivational_quote}")
+        update.message.reply_text(reply_text, parse_mode='MarkdownV2')
+    else:
+        print("Reply is not to the daily task message. No motivational quote sent.")
 
 def main():
     print("Initializing Updater...")
-    updater = Updater('7048375330:AAEIYAO4DJt91_fFfMmuFwNjafwnwt2D3AQ', use_context=True)
+    updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
     
     # Handlers
